@@ -1,0 +1,213 @@
+{
+    "profiles": [
+        {
+            "complex_modifications": {
+                "rules": [
+                    {
+                        "description": "Toggle CAPS_LOCK with LEFT_SHIFT + RIGHT_SHIFT",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "left_shift",
+                                    "modifiers": { "mandatory": ["right_shift"], "optional": ["caps_lock"] }
+                                },
+                                "to": [{ "key_code": "caps_lock" }],
+                                "to_if_alone": [{ "key_code": "left_shift" }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "right_shift",
+                                    "modifiers": { "mandatory": ["left_shift"], "optional": ["caps_lock"] }
+                                },
+                                "to": [{ "key_code": "caps_lock" }],
+                                "to_if_alone": [{ "key_code": "right_shift" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "CAPS_LOCK : set hyper variable or ESCAPE (if alone)",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "caps_lock",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [
+                                    { "set_variable": { "name": "hyper", "value": 1 } }
+                                ],
+                                "to_after_key_up": [
+                                    { "set_variable": { "name": "hyper", "value": 0 } }
+                                ],
+                                "to_if_alone": [{ "key_code": "escape" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "Avoid sysdiagnose cmd+shift+option+ctrl+,",
+                                "from": { "key_code": "comma", "modifiers": { "mandatory": ["command", "shift", "option", "control"] } },
+                                "to": [],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "Avoid sysdiagnose cmd+shift+option+ctrl+.",
+                                "from": { "key_code": "period", "modifiers": { "mandatory": ["command", "shift", "option", "control"] } },
+                                "to": [],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "Avoid sysdiagnose cmd+shift+option+ctrl+/",
+                                "from": { "key_code": "slash", "modifiers": { "mandatory": ["command", "shift", "option", "control"] } },
+                                "to": [],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Yabai window management (hyper = caps_lock held)",
+                        "manipulators": [
+                            {
+                                "description": "hyper-h: warp west",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "m", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m window --warp west" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-l: warp east",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "u", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m window --warp east" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-j: warp south",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "y", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m window --warp south" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-k: warp north",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "n", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m window --warp north" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-t: focus recent window",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "f", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m window --focus recent" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-r: rotate space 90",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "s", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --rotate 90" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-f: toggle fullscreen zoom",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "e", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m window --toggle zoom-fullscreen" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-return: open Alacritty",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "return_or_enter", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "open -a Alacritty" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "ctrl+alt+cmd-r: restart yabai",
+                                "from": { "key_code": "r", "modifiers": { "mandatory": ["command", "control", "option"], "optional": ["any"] } },
+                                "to": [{ "shell_command": "/bin/launchctl kickstart -k \"gui/$(id -u)/homebrew.mxcl.yabai\"" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-1: focus space 1",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "1", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 1" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-2: focus space 2",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "2", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 2" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-3: focus space 3",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "3", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 3" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-4: focus space 4",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "4", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 4" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-5: focus space 5",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "5", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 5" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-6: focus space 6",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "6", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 6" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-7: focus space 7",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "7", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 7" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-8: focus space 8",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "8", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 8" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-9: focus space 9",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "9", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 9" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "hyper-0: focus space 10",
+                                "conditions": [{ "type": "variable_if", "name": "hyper", "value": 1 }],
+                                "from": { "key_code": "0", "modifiers": { "optional": ["any"] } },
+                                "to": [{ "shell_command": "/opt/homebrew/bin/yabai -m space --focus 10" }],
+                                "type": "basic"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "name": "Default profile",
+            "selected": true,
+            "virtual_hid_keyboard": {
+                "country_code": 0,
+                "keyboard_type_v2": "ansi"
+            }
+        }
+    ]
+}
